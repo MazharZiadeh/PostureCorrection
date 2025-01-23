@@ -1,149 +1,195 @@
-Here's a complete GitHub README for your Arduino project explaining the code, filtering algorithm, buffer mechanism, averaging, and manual calculations:
+
+
+# Back Posture Monitoring and Analysis System
+
+This project aims to monitor and analyze back posture using the **MPU6050** accelerometer and gyroscope sensor connected to an ESP32 microcontroller. The system collects data, analyzes posture, and provides real-time feedback and performance metrics.
 
 ---
 
-# Back Posture Monitoring System with MPU6050 and ESP32
+## Project Overview
 
-This project uses an **MPU6050** gyroscope and accelerometer sensor along with an ESP32 to monitor back posture in real-time. It calculates the roll angle and sends posture data to the **Blynk IoT platform**, while also activating a buzzer and LED for poor posture warnings.
+1. **Real-Time Posture Monitoring**:
+   - Uses MPU6050 to calculate roll angles, determining the user's posture.
+   - Alerts users through a buzzer and LED for poor posture.
+   - Sends posture data to the Blynk IoT platform.
+
+2. **Data Collection**:
+   - Data is logged via a Python script to an Excel file for further analysis.
+
+3. **Data Analysis**:
+   - A MATLAB script evaluates the collected data for good and bad posture percentages and visualizes performance metrics.
 
 ---
 
 ## Features
 
-- **Posture Monitoring**: Calculates the roll angle using the MPU6050 sensor.
-- **Real-Time Feedback**: Alerts the user via LED and buzzer if their posture exceeds safe thresholds.
-- **Blynk Integration**: Displays posture status ("Good" or "Bad") on the Blynk IoT app.
-- **Tare Functionality**: Allows resetting the roll angle to zero for recalibration.
+- **Live Posture Alerts**:
+  - LED and buzzer alert for poor posture exceeding ±30°.
+- **Blynk IoT Integration**:
+  - Displays posture status ("Good" or "Bad") in the Blynk app.
+- **Data Logging**:
+  - Saves detailed sensor data, filtered values, and manually calculated angles into an Excel file.
+- **Posture Analysis**:
+  - MATLAB script calculates overall performance and provides graphical comparisons of raw and filtered data.
 
 ---
 
 ## Components Used
 
-1. **ESP32**: Microcontroller for Wi-Fi connectivity and processing.
-2. **MPU6050**: 6-axis accelerometer and gyroscope.
-3. **Buzzer**: For audio alerts.
-4. **LED**: For visual alerts.
-5. **Blynk IoT Platform**: To monitor the posture remotely.
+- **ESP32**: Microcontroller for processing and Wi-Fi connectivity.
+- **MPU6050**: 6-axis accelerometer and gyroscope.
+- **Buzzer & LED**: For user feedback.
+- **Blynk IoT Platform**: Remote monitoring.
+- **Python & MATLAB**: Data collection and analysis.
 
 ---
 
-## Code Breakdown
+## Setup Instructions
 
-### Main Functionalities
+### Hardware
 
-1. **Initialization**:
-   - The MPU6050 sensor is initialized and tested for connection.
-   - Wi-Fi credentials and Blynk authentication are set up.
-
-2. **Buffer and Averaging**:
-   - A buffer stores the latest sensor readings (5 values by default).
-   - Averaging is applied to smooth out noisy sensor data.
-
-3. **Posture Calculation**:
-   - The roll angle is computed using the arctangent of accelerometer values.
-   - The angle is adjusted based on a "tare" operation to set the reference to 0.
-
-4. **Posture Alert System**:
-   - If the roll angle deviates beyond ±30°, an alert is triggered via the buzzer and LED.
-   - Posture data is sent to the Blynk app for remote monitoring.
+1. Connect the MPU6050 to ESP32:
+   - `VCC` → 3.3V
+   - `GND` → GND
+   - `SDA` → GPIO 21
+   - `SCL` → GPIO 22
+2. Connect a buzzer to GPIO 25 and an LED to GPIO 2.
 
 ---
 
-### Filtering and Buffering Mechanism
+### Software
 
-1. **Buffering**:
-   - Buffers are used for each axis of acceleration: `axBuffer`, `ayBuffer`, `azBuffer`.
-   - New readings are added to the buffer in a cyclic manner using a circular index.
-
-   ```cpp
-   void updateBuffer(float buffer[], float newValue) {
-       buffer[bufferIndex] = newValue;
-       bufferIndex = (bufferIndex + 1) % bufferSize;
-   }
-   ```
-
-2. **Averaging**:
-   - The average of the buffered values is computed to filter out noise.
-
-   ```cpp
-   float calculateAverage(float buffer[]) {
-       float sum = 0;
-       for (int i = 0; i < bufferSize; i++) {
-           sum += buffer[i];
-       }
-       return sum / bufferSize;
-   }
-   ```
-
----
-
-### Algorithm Details
-
-1. **Roll Angle Calculation**:
-   - The roll angle is calculated using the formula:
-![image](https://github.com/user-attachments/assets/9b8ab116-69d4-4c5d-b2b5-c1671af03f80)
-
-   - `Ay`, `Ax`, and `Az` are the filtered accelerometer readings.
-
-2. **Tare Adjustment**:
-   - A tare button in the Blynk app allows resetting the roll angle to 0.
-   - This compensates for sensor orientation or mounting differences.
-
-   ```cpp
-   if (param.asInt() == 1) { // Tare button pressed
-       tareApplied = true;
-       initialRoll = calculateRoll();
-   }
-   ```
-
----
-
-## Circuit Diagram
-
-- Connect the **MPU6050** to the ESP32 via I2C:
-  - `VCC` → 3.3V
-  - `GND` → GND
-  - `SDA` → GPIO 21
-  - `SCL` → GPIO 22
-- Connect a buzzer to GPIO 25 and an LED to GPIO 2.
-
----
-
-## Setup and Usage
-
-1. **Hardware Setup**:
-   - Connect the components as described in the circuit diagram.
-
-2. **Code Upload**:
-   - Install the required libraries:
+1. **Install Libraries**:
+   - Arduino IDE:
      - `MPU6050`
      - `BlynkSimpleEsp32`
-   - Upload the code using the Arduino IDE.
+   - Python:
+     - `pandas`
+     - `keyboard`
+   - MATLAB:
+     - Ensure Excel import capability (`detectImportOptions`).
 
-3. **Blynk Configuration**:
-   - Use the Blynk app to set up a project.
-   - Add a button on `V0` for tare functionality.
-   - Add a display widget on `V1` to show posture status.
+2. **Configure Arduino Code**:
+   - Add your Blynk credentials and Wi-Fi SSID/password.
 
-4. **Run the System**:
-   - Power up the ESP32.
-   - Monitor posture status in the Blynk app.
+3. **Run Python Script for Data Collection**:
+   - Adjust the serial port (`COM10`) to match your ESP32 connection.
+   - Press `0` to start recording and `9` to stop.
+
+4. **Analyze Data in MATLAB**:
+   - Place the Excel files in the same folder as the MATLAB script.
+   - Run the script to generate performance metrics and plots.
+
+---
+
+## Code Explanation
+
+### 1. Arduino Code (Real-Time Posture Monitoring)
+
+The Arduino code calculates the roll angle based on MPU6050 readings. It implements:
+- **Filtering with Circular Buffer**:
+  Smooths raw accelerometer data using a 5-value buffer.
+
+  ```cpp
+  void updateBuffer(float buffer[], float newValue) {
+      buffer[bufferIndex] = newValue;
+      bufferIndex = (bufferIndex + 1) % bufferSize;
+  }
+  ```
+
+- **Roll Angle Calculation**:
+  Uses the formula:
+
+
+![image](https://github.com/user-attachments/assets/e4d69529-efa1-4521-86ca-8a6d4068e539)
+
+
+
+  ```cpp
+  float filteredRoll = atan2(filteredAy, sqrt(filteredAx * filteredAx + filteredAz * filteredAz)) * 180.0 / PI;
+  ```
+
+- **Alert System**:
+  Activates the LED and buzzer for poor posture (roll > ±30°).
+
+- **Tare Functionality**:
+  Resets the reference roll angle to 0 when a Blynk button is pressed.
+
+---
+
+### 2. Python Script (Data Collection)
+
+This script records real-time sensor data from the ESP32 and saves it to an Excel file with two sheets:
+1. **Full Data**: Contains all raw and filtered sensor values.
+2. **Filtered View**: Contains key data for posture analysis.
+
+Key features:
+- **Real-Time Data Logging**:
+  Captures data every 0.5 seconds.
+- **Excel Export**:
+  Saves data in structured sheets for analysis.
+
+---
+
+### 3. MATLAB Script (Data Analysis)
+
+The MATLAB script processes the Excel files to evaluate posture performance:
+- **Good vs Bad Posture**:
+  Calculates percentages of time spent in good (±30°) and bad posture.
+
+- **Performance Metrics**:
+  Generates:
+  - Percentage of good and bad posture.
+  - Graphical plots:
+    - Time vs Manual Raw Roll.
+    - Time vs Manual Filtered Roll.
+    - Comparison of Raw and Filtered Roll.
+
+Example visualization:
+- **Good Posture**: Roll within ±30°.
+- **Bad Posture**: Roll outside this range.
+
+---
+
+## Results and Graphs
+
+The MATLAB script outputs:
+1. **Performance Metrics**:
+   - Good Posture: e.g., 85%
+   - Bad Posture: e.g., 15%
+   - Performance Index: e.g., 85%
+
+2. **Visualizations**:
+   - Roll vs Time (Raw and Filtered).
+   - Comparison of Raw and Filtered Roll.
+
+---
+
+## How It All Fits Together
+
+1. **Real-Time Monitoring**:
+   - The Arduino code monitors and alerts on poor posture.
+2. **Data Logging**:
+   - The Python script logs sensor readings into Excel files for offline analysis.
+3. **Posture Analysis**:
+   - The MATLAB script evaluates and visualizes posture trends.
 
 ---
 
 ## Troubleshooting
 
-- **MPU6050 Connection Failed**:
-  - Ensure proper wiring and check I2C addresses.
-- **No Posture Updates**:
-  - Verify Wi-Fi credentials and Blynk configuration.
+- **MPU6050 Connection Fails**:
+  - Check wiring and I2C addresses.
+- **Data Not Saved**:
+  - Ensure Python has write permissions in the script directory.
+- **MATLAB Errors**:
+  - Ensure Excel files are in the script directory and have valid data.
 
 ---
 
 ## License
 
-This project is open-source under the MIT License. Feel free to modify and improve it.
+This project is open-source under the MIT License. Contributions and modifications are welcome!
 
---- 
+---
 
-Feel free to customize the content further! Let me know if you'd like to add anything else.
