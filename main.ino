@@ -6,8 +6,8 @@
 #include <MPU6050.h>
 #include <BlynkSimpleEsp32.h>
 
-char ssid[] = "Chud";
-char pass[] = "westhasfallen";
+char ssid[] = "YOUR WIFI ADRESS";
+char pass[] = "YOUR WIFI PASSWORD";
 
 MPU6050 mpu;
 BlynkTimer timer;
