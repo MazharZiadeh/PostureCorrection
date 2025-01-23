@@ -55,6 +55,15 @@ This project aims to monitor and analyze back posture using the **MPU6050** acce
    - `SCL` → GPIO 22
 2. Connect a buzzer to GPIO 25 and an LED to GPIO 2.
 
+
+![image](https://github.com/user-attachments/assets/7fec32d4-d916-4b2f-b7fd-2599b32cf9fc)
+
+
+![image](https://github.com/user-attachments/assets/b13e05ff-3bb2-4c1b-a58a-bc633a0b3023)
+
+
+
+
 ---
 
 ### Software
