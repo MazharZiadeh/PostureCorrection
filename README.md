@@ -81,10 +81,7 @@ This project uses an **MPU6050** gyroscope and accelerometer sensor along with a
 
 1. **Roll Angle Calculation**:
    - The roll angle is calculated using the formula:
-
-     \[
-     \text{roll} = \arctan \left(\frac{A_y}{\sqrt{A_x^2 + A_z^2}}\right) \times \frac{180}{\pi}
-     \]
+![image](https://github.com/user-attachments/assets/9b8ab116-69d4-4c5d-b2b5-c1671af03f80)
 
    - `Ay`, `Ax`, and `Az` are the filtered accelerometer readings.
 
